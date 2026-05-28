@@ -152,12 +152,12 @@ function validarCartao(payload) {
   // Acumula erros de validacao para retornar tudo de uma vez.
   var erros = [];
 
-  if (!payload || !payload.titular) {
+  if (!payload || !payload.nome) {
     erros.push('Campo titular e obrigatorio.');
   }
 
-  if (!payload || !/^\d{16}$/.test(String(payload.numero || ''))) {
-    erros.push('Campo numero deve ter 16 digitos.');
+    if (!payload || !/^\d{16}$/.test(String(payload.numeroCartao || ''))) {
+   
   }
 
   if (!payload || !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(String(payload.validade || ''))) {
@@ -171,6 +171,10 @@ function validarCartao(payload) {
   if (!payload || typeof payload.limite !== 'number' || payload.limite < 0) {
     erros.push('Campo limite deve ser numero maior ou igual a zero.');
   }
+   if (!payload || typeof payload.disponivel !== 'number' || payload.disponivel < 0) {
+    erros.push('Campo disponivel deve ser numero maior ou igual a zero.');
+  }
+
 
   if (!payload || !payload.bandeira) {
     erros.push('Campo bandeira e obrigatorio.');
@@ -228,12 +232,13 @@ exports.criar = function (req, res) {
   }
 
   var novoCartao = {
-    id: nextId++,
-    titular: payload.titular,
-    numero: String(payload.numero),
+    id: payload.id,
+    nome: payload.nome,
+    numeroCartao: String(payload.numeroCartao),
     validade: String(payload.validade),
     cvv: String(payload.cvv),
     limite: payload.limite,
+    disponivel:payload.disponivel,
     bandeira: String(payload.bandeira),
     ativo: payload.ativo === false ? false : true
   };
@@ -259,7 +264,7 @@ exports.atualizar = function (req, res) {
   }
 
   cartao.titular = payload.titular;
-  cartao.numero = String(payload.numero);
+  cartao.numero = String(payload.numeroCartao);
   cartao.validade = String(payload.validade);
   cartao.cvv = String(payload.cvv);
   cartao.limite = payload.limite;
